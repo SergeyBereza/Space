@@ -2,3 +2,9 @@ body {
 	margin: 15px 25px 15px 15px;
 	background-color: #58636E;
 }
+
+.observer {
+	border: 2px white solid;
+	border-radius: 10px;
+	cursor: pointer;
+}

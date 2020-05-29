@@ -1,11 +1,3 @@
-class Space
-{
-}
-
-class Observer
-{
-}
-
 $(function(){
 	let observers = [];
 	let space = new Space();
