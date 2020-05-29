@@ -3,13 +3,26 @@ body {
 	background-color: #58636E;
 }
 
+.container {
+	width: 100vw;
+	height: 95vh;
+}
+
 .observer {
+	width: 100%;
+	height: 95vh;
+	background-color: #222;
 	border: 2px white solid;
 	border-radius: 10px;
 	cursor: pointer;
 }
 
 .observer-layout1 {
+	width: 100%;
+	height: 1250px;
+}
+
+.observer-layout2 {
 	width: 100%;
 	height: 1250px;
 }

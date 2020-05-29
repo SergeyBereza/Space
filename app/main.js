@@ -3,6 +3,10 @@ $(function(){
 	let space = new Space();
 
 	$('.observer').each(function () {
-		observers.push(new Observer(this, space));
+		let options = {
+			container: this,
+			space: space
+		}
+		observers.push(new Observer(options));
 	});
 });
