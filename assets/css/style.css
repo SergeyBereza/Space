@@ -8,3 +8,8 @@ body {
 	border-radius: 10px;
 	cursor: pointer;
 }
+
+.observer-layout1 {
+	width: 100%;
+	height: 1250px;
+}
