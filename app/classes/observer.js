@@ -7,10 +7,11 @@ class Observer
 		this.width = this.container.width();
 		this.height = this.container.height();
 		this.scale = 50;
-		this.position = { x: 0, y: 0, z: 0 }
+		this.position = { x: 0, y: 0, z: 0 };
 
 		this.createSVG();
 		this.createScaleGrid();
+		this.updateSpace();
 
 		let observer = this;
 		$(this.container).on('mousemove', function(event) {
@@ -20,11 +21,13 @@ class Observer
 			observer.position.y += event.originalEvent.movementY * observer.scale;
 
 			observer.createScaleGrid();
+			observer.updateSpace();
 		});
 
 		$(this.container).on('wheel', function(event) {
 			observer.scale *= 1 + event.originalEvent.deltaY / 1000;
 			observer.createScaleGrid();
+			observer.updateSpace();
 		});
 
 		window.setInterval(function() {
@@ -37,7 +40,7 @@ class Observer
 			'<svg viewBox="0 0 ' + this.width + ' ' + this.height + '" width="' + this.width + 'px" height="' + this.height + 'px" style="background-color:#222">' +
 				'<rect class="observerWindow" x="0" y="0" width="' + this.width + '" height="' + this.height + '" fill="none" stroke="#222"/>' +
 				'<g class="observerScaleGrid" stroke="#888" stroke-width="1"></g>' +
-				'<g class="observerObjectes" fill="#004"></g>' +
+				'<g class="observerObjectes" fill="#fff"></g>' +
 				'<g id="observerRockets"></g>' +
 				'<defs>' +
 					'<symbol id="symRocket">' +
@@ -89,6 +92,22 @@ class Observer
 
 	updateSpace ()
 	{
-
+		this.space.tick();
+		this.showSpaceObjects();
 	}
+
+	showSpaceObjects() {
+		let text = '';
+		for (let code in this.space.objects) {
+			let object = this.space.objects[code].data;
+
+			let objectX = (this.width >> 1) + (this.position.x + object.position.x) / this.scale;
+			let objectY = (this.height >> 1) + (this.position.y + object.position.y) / this.scale;
+			let objectR = Math.max(object.radius / this.scale, 5);
+
+			text += '<circle cx="' + objectX + '" cy="' + objectY + '" r="' + objectR + '"/>';
+		}
+		$('.observerObjectes', this.container).html(text);
+	}
+
 }
