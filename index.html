@@ -12,9 +12,13 @@
 		<script type="text/javascript" src="vendors/jquery/jquery-3.2.1.min.js"></script>
 		<script type="text/javascript" src="vendors/jquery-ui/jquery-ui.min.js"></script>
 		<script type="text/javascript" src="vendors/bootstrap/bootstrap.min.js"></script>
+
+		<!-- begin. Данные которые должны загружатся программно -->
+		<script type="text/javascript" src="app/classes/helper.js"></script>
 		<script type="text/javascript" src="app/classes/space.js"></script>
 		<script type="text/javascript" src="app/classes/spaceobjects.js"></script>
 		<script type="text/javascript" src="app/classes/observer.js"></script>
+		<!-- end -->
 		<script type="text/javascript" src="app/main.js"></script>
 
 		<title>Космос</title>
@@ -32,15 +36,10 @@
 			</div-->
 		</div>
 
+		<!-- begin. Данные которые должны загружатся программно -->
 		<div id="storage" style="display:none">
 			<div id="spaceObjectStats" title="Шатл">
 				<table style="border-radius:10px">
-					<thead>
-						<tr>
-							<td style="border-bottom:1px solid white;padding-bottom:5px;"><i class="fa fa-arrows move-block" style="cursor:pointer"></i></td>
-							<td style="border-bottom:1px solid white;padding-bottom:5px;">Корабль:Farefly</td>
-						</tr>
-					</thead>
 					<tbody>
 						<tr>
 							<td style="width:30px;padding-top:5px;"><img height="20px" src="assets/images/clock.svg" /></td>
@@ -64,5 +63,6 @@
 				</table>
 			</div>
 		</div>
+		<!-- end -->
 	</body>
 </html>

@@ -3,6 +3,9 @@ class SpaceObjects
 	constructor (data)
 	{
 		this.data = data;
+		this.timer = 0;
+		this.time = data.time;
+		this.statsContainer = false;
 	}
 
 	move (deltaTime)
@@ -16,5 +19,19 @@ class SpaceObjects
 		this.data.position.x += v0.x * deltaTime + this.data.acceleration.x * (deltaTime * deltaTime) / 2;
 		this.data.position.y += v0.y * deltaTime + this.data.acceleration.y * (deltaTime * deltaTime) / 2;
 		this.data.position.z += v0.z * deltaTime + this.data.acceleration.z * (deltaTime * deltaTime) / 2;
+
+		this.timer += deltaTime;
+		this.time += deltaTime;
+
+		if (this.statsContainer) {
+			this.displayStats();
+		}
+	}
+
+	displayStats ()
+	{
+		this.statsContainer.find('.time').html(Helper.TimeToString(this.time));
+		this.statsContainer.find('.timer').html(Helper.TimerToString(this.timer));
+		this.statsContainer.find('.velocity').html(Helper.VectorLengthToString(this.data.velocity));
 	}
 }

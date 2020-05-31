@@ -30,20 +30,29 @@ class Observer
 			observer.updateSpace();
 		});
 
-		$(this.container).on('click', '[data-code]', function(event) {
-			let code = $(this).data('code');
+		$(this.container).on('click', '[data-code]', (evnt) => {
+			let $this = $(evnt.currentTarget);
+			let code = $this.data('code');
 			let id = 'spaceObjectStats_' + code;
 
 			let obj = $('#' + id);
+			console.log(obj);
 			if (obj.length == 0) {
-				let dialog = '<div id="' + id + '" title="' + observer.space.objects[code].data.name + '">' + $('#spaceObjectStats').html() + '</div>';
+				let dialog = '<div id="' + id + '">' + $('#spaceObjectStats').html() + '</div>';
 				$('#storage').append(dialog);
-				$('#' + id).dialog();
-				observer.space.objects[code].statsContainer = $('#' + id);
+				$('#' + id).dialog({
+					resizable: false,
+					title: observer.space.objects[code].data.name,
+					close: (evnt, ui) => {
+						console.log(id);
+						$('#' + id).dialog('destroy').remove();
+					}
+				});
+				this.space.objects[code].statsContainer = $('#' + id);
 			}
 
 			console.log(code);
-			console.log(observer.space.objects[code].data);
+			console.log(this.space.objects[code].data);
 		});
 
 		window.setInterval(function() {

@@ -37,6 +37,7 @@ class Space
 		}];
 
 		arData.forEach((value, index, array) => {
+			value.time = this.systemTime;
 			this.objects[value.code] = new SpaceObjects(value);
 		});
 	}

@@ -12,10 +12,14 @@
 }
 
 body {
-	font-family: 'Digital-7 Mono';
+	font-family: 'Pixel LCD-7';
 	line-height: 1;
 	margin: 15px 25px 15px 15px;
 	background-color: #58636E;
+}
+
+.num {
+	font-family: 'Digital-7 Mono';
 }
 
 .container {
