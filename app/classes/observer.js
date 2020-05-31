@@ -6,7 +6,7 @@ class Observer
 		this.container = $(options.container);
 		this.width = this.container.width();
 		this.height = this.container.height();
-		this.scale = 50;
+		this.scale = 12;
 		this.position = { x: 0, y: 0, z: 0 };
 
 		this.createSVG();
@@ -30,6 +30,22 @@ class Observer
 			observer.updateSpace();
 		});
 
+		$(this.container).on('click', '[data-code]', function(event) {
+			let code = $(this).data('code');
+			let id = 'spaceObjectStats_' + code;
+
+			let obj = $('#' + id);
+			if (obj.length == 0) {
+				let dialog = '<div id="' + id + '" title="' + observer.space.objects[code].data.name + '">' + $('#spaceObjectStats').html() + '</div>';
+				$('#storage').append(dialog);
+				$('#' + id).dialog();
+				observer.space.objects[code].statsContainer = $('#' + id);
+			}
+
+			console.log(code);
+			console.log(observer.space.objects[code].data);
+		});
+
 		window.setInterval(function() {
 			observer.updateSpace();
 		}, 1000);
@@ -37,6 +53,7 @@ class Observer
 
 	createSVG () {
 		var text =
+			'<div class="stats" style="color:white;position:absolute"></div>' +
 			'<svg viewBox="0 0 ' + this.width + ' ' + this.height + '" width="' + this.width + 'px" height="' + this.height + 'px" style="background-color:#222">' +
 				'<rect class="observerWindow" x="0" y="0" width="' + this.width + '" height="' + this.height + '" fill="none" stroke="#222"/>' +
 				'<g class="observerScaleGrid" stroke="#888" stroke-width="1"></g>' +
@@ -72,7 +89,8 @@ class Observer
 		this.container.html(text);
 	}
 
-	createScaleGrid () {
+	createScaleGrid ()
+	{
 		let text;
 
 		let distance = 10000 / this.scale;
@@ -94,9 +112,11 @@ class Observer
 	{
 		this.space.tick();
 		this.showSpaceObjects();
+		this.showObserverStats();
 	}
 
-	showSpaceObjects() {
+	showSpaceObjects()
+	{
 		let text = '';
 		for (let code in this.space.objects) {
 			let object = this.space.objects[code].data;
@@ -105,9 +125,14 @@ class Observer
 			let objectY = (this.height >> 1) + (this.position.y + object.position.y) / this.scale;
 			let objectR = Math.max(object.radius / this.scale, 5);
 
-			text += '<circle cx="' + objectX + '" cy="' + objectY + '" r="' + objectR + '"/>';
+			text += '<circle data-code="' + object.code + '" cx="' + objectX + '" cy="' + objectY + '" r="' + objectR + '"/>';
 		}
 		$('.observerObjectes', this.container).html(text);
 	}
 
+	showObserverStats()
+	{
+		let text = '2020-05-30 11:03:50<br>X: ' + this.position.x + ' км<br>Y: ' + this.position.y + ' км<br>Scale: ' + this.scale + ' км';
+		this.container.find('.stats').html(text);
+	}
 }

@@ -1,11 +1,26 @@
+@font-face {
+	font-family: 'Pixel LCD-7';
+	font-style: normal;
+	font-weight: 400;
+	src: url(../fonts/PixelLCD-7.ttf) format('truetype');
+}
+@font-face {
+	font-family: 'Digital-7 Mono';
+	font-style: normal;
+	font-weight: 400;
+	src: url(../fonts/digital-7-mono.woff) format('woff');
+}
+
 body {
+	font-family: 'Digital-7 Mono';
+	line-height: 1;
 	margin: 15px 25px 15px 15px;
 	background-color: #58636E;
 }
 
 .container {
 	width: 100vw;
-	height: 95vh;
+	height: 97vh;
 }
 
 .observer {
@@ -13,7 +28,7 @@ body {
 	height: 95vh;
 	background-color: #222;
 	border: 2px white solid;
-	border-radius: 10px;
+	border-radius: 5px;
 	cursor: pointer;
 }
 
