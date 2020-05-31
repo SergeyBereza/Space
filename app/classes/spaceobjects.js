@@ -32,6 +32,6 @@ class SpaceObjects
 	{
 		this.statsContainer.find('.time').html(Helper.TimeToString(this.time));
 		this.statsContainer.find('.timer').html(Helper.TimerToString(this.timer));
-		this.statsContainer.find('.velocity').html(Helper.VectorLengthToString(this.data.velocity));
+		this.statsContainer.find('.velocity').html(Helper.VectorLengthToString(this.data.velocity, 3));
 	}
 }
