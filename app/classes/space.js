@@ -12,7 +12,6 @@ class Space
 			'name': 'Земля',
 			'position': { x: 0, y: 0, z: 0 },
 			'velocity': { x: 0, y: 0, z: 0 },
-			'acceleration': { x: 0, y: 0, z: 0 },
 
 			'radius': 6371.0,
 			'weight': 5.97219e+24
@@ -21,7 +20,6 @@ class Space
 			'name': 'Луна',
 			'position': { x: 384467, y: 0, z: 0 },
 			'velocity': { x: 0, y: 0, z: 0 },
-			'acceleration': { x: 0, y: 0, z: 0 },
 
 			'radius': 1737.1,
 			'weight': 7.3477e+22
@@ -30,7 +28,8 @@ class Space
 			'name': 'Светлячок',
 			'position': { x: 0, y: 6700, z: 0 },
 			'velocity': { x: 8, y: 0, z: 0 },
-			'acceleration': { x: 0, y: 0, z: 0 },
+
+			'engine': { x: 0, y: 0, z: 0 },
 
 			'radius': 0,
 			'weight': 1000
@@ -49,6 +48,7 @@ class Space
 
 		for (let code in this.objects) {
 			let mainObject = this.objects[code].data;
+			mainObject.acceleration = { x: 0, y: 0, z: 0 };
 
 			for (let subCode in this.objects) {
 				if (code == subCode) continue;
@@ -68,6 +68,10 @@ class Space
 				acceleration.x = sAcceleration * (distance.x / sDistance);
 				acceleration.y = sAcceleration * (distance.y / sDistance);
 				acceleration.z = sAcceleration * (distance.z / sDistance);
+
+				mainObject.acceleration.x += acceleration.x;
+				mainObject.acceleration.y += acceleration.y;
+				mainObject.acceleration.z += acceleration.z;
 
 				mainObject.velocity.x += deltaTime * acceleration.x;
 				mainObject.velocity.y += deltaTime * acceleration.y;

@@ -22,7 +22,7 @@ class Helper
 		if (days < 10) days = '00' + days;
 		else if (days < 100) days = '0' + days;
 
-		return days + ':' + hours + ':' + minutes + ':' + seconds;
+		return '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + days + ':' + hours + ':' + minutes + ':' + seconds;
 	}
 
 	static VectorLengthToString (vector, decimals = 0) {
