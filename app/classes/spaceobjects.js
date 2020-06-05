@@ -2,6 +2,8 @@ class SpaceObjects
 {
 	constructor (data)
 	{
+		data.symbol = data.hasOwnProperty('symbol') ? data.symbol : false;
+
 		this.data = data;
 		this.data.acceleration = { x: 0, y: 0, z: 0 };
 		this.timer = 0;

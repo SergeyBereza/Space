@@ -10,6 +10,7 @@ class Space
 		let arData = [{
 			'code': 'Earth',
 			'name': 'Земля',
+			'type': 'GRAVITY',
 			'position': { x: 0, y: 0, z: 0 },
 			'velocity': { x: 0, y: 0, z: 0 },
 
@@ -18,14 +19,17 @@ class Space
 		},{
 			'code': 'Earth_Moon',
 			'name': 'Луна',
+			'type': 'GRAVITY',
 			'position': { x: 384467, y: 0, z: 0 },
 			'velocity': { x: 0, y: 0, z: 0 },
 
 			'radius': 1737.1,
 			'weight': 7.3477e+22
 		},{
-			'code': 'Farefly',
-			'name': 'Светлячок',
+			'code': 'Shuttle',
+			'name': 'Шатл',
+			'type': 'SHIP',
+			'symbol': 'ship1',
 			'position': { x: 0, y: 6700, z: 0 },
 			'velocity': { x: 8, y: 0, z: 0 },
 
@@ -62,7 +66,7 @@ class Space
 				distance.x = gravityObject.position.x - mainObject.position.x;
 				distance.y = gravityObject.position.y - mainObject.position.y;
 				distance.z = gravityObject.position.z - mainObject.position.z;
-				sDistance = Math.sqrt(distance.x * distance.x + distance.y * distance.y + distance.z * distance.z);
+				sDistance = Math.hypot(distance.x, distance.y, distance.z);				
 				sAcceleration = Space.G * gravityObject.weight / (sDistance * sDistance);
 
 				acceleration.x = sAcceleration * (distance.x / sDistance);
