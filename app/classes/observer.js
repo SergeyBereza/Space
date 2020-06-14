@@ -6,30 +6,49 @@ class Observer
 		this.container = $(options.container);
 		this.width = this.container.width();
 		this.height = this.container.height();
-		this.scale = 12;
+		this.scale = 15;
 		this.position = { x: 0, y: 0, z: 0 };
 		this.statsContainer = false;
 		this.timeControl = 1;
+		this.timeStep = 1000;
+		this.systemTime = new Date() / 1000;
+		this.tickCycle = null;
+		this.follow = false;
+
+		//this.follow = 'Shuttle';
+		//this.position.x = -this.space.objects[this.follow].data.position.x;
+		//this.position.y = -this.space.objects[this.follow].data.position.y;
+		//this.position.z = -this.space.objects[this.follow].data.position.z;
 
 		this.createSVG();
 		this.createScaleGrid();
-		this.updateSpace();
+		this.updateSpace(false);
 
-		let observer = this;
-		$(this.container).on('mousemove', function(event) {
-			if (event.buttons != 1) return true;
+		$(window).on('resize', (evnt) => {
+			this.width = this.container.width();
+			this.height = this.container.height();
 
-			observer.position.x += event.originalEvent.movementX * observer.scale;
-			observer.position.y += event.originalEvent.movementY * observer.scale;
-
-			observer.createScaleGrid();
-			observer.updateSpace();
+			this.createSVG();
+			this.createScaleGrid();
+			this.updateSpace(false);
 		});
 
-		$(this.container).on('wheel', function(event) {
-			observer.scale *= 1 + event.originalEvent.deltaY / 1000;
-			observer.createScaleGrid();
-			observer.updateSpace();
+		$(this.container).on('mousemove', (evnt) => {
+			if (evnt.buttons != 1) return true;
+			if (this.follow) return true;
+
+			this.position.x += evnt.originalEvent.movementX * this.scale;
+			this.position.y += evnt.originalEvent.movementY * this.scale;
+
+			this.createScaleGrid();
+			this.updateSpace(false);
+		});
+
+		$(this.container).on('wheel', (evnt) => {
+			this.scale *= 1 + evnt.originalEvent.deltaY / 1000;
+
+			this.createScaleGrid();
+			this.updateSpace(false);
 		});
 
 		$(this.container).on('click', '[data-code]', (evnt) => {
@@ -46,8 +65,9 @@ class Observer
 				$('#storage').append(dialog);
 				$('#' + id).dialog({
 					resizable: false,
-					title: observer.space.objects[code].data.name,
+					title: this.space.objects[code].data.name,
 					close: (evnt, ui) => {
+						this.space.objects[code].statsContainer = false;
 						$('#' + id).dialog('destroy').remove();
 					}
 				});
@@ -99,9 +119,9 @@ class Observer
 			this.showStats();
 		});
 
-		window.setInterval(function() {
-			observer.updateSpace();
-		}, 1000);
+		this.tickCycle = window.setInterval(() => {
+			this.updateSpace(true);
+		}, this.timeStep);
 	}
 
 	createSVG () {
@@ -131,13 +151,22 @@ class Observer
 		$('.observerScaleGrid', this.container).html(text);
 	}
 
-	updateSpace ()
+	updateSpace (hasTick = true)
 	{
-		this.space.tick();
+		if (hasTick) {
+			this.space.tick(this.timeControl);
+
+			if (this.follow) {
+				this.position.x = -this.space.objects[this.follow].data.position.x;
+				this.position.y = -this.space.objects[this.follow].data.position.y;
+				this.position.z = -this.space.objects[this.follow].data.position.z;
+			}
+		}
 		this.showSpaceObjects();
 		this.showStats();
 	}
 
+	// TODO: Нужно не создавать все объекты заново
 	showSpaceObjects ()
 	{
 		let text = '', length;
@@ -159,7 +188,28 @@ class Observer
 			text += '<g data-code="' + object.code + '">';
 
 			if (object.symbol) {
-				text += '<use xlink:href="#' + object.symbol + '" x="' + (objectX - 27/2) + '" y="' + (objectY - 60/2) + '" transform="rotate(' + sVelocityAngle + ' ' + objectX + ' ' + objectY + ')" />';
+				let symWidth = $('#' + object.symbol).attr('width');
+				let symHeight = $('#' + object.symbol).attr('height');
+				if (object.type == 'SHIP') {
+					if (objectR < 30) {
+						objectR = 30;
+					}
+					let scale = (objectR / (symWidth / 2));
+					text += '<use xlink:href="#' + object.symbol + '" x="' + (objectX - symWidth / 2) + '" y="' + (objectY - symWidth / 2) + '" transform="scale(' + scale + ') translate(' + -(((objectX - symWidth / 2) - (objectX - symWidth / 2) / scale) + (symWidth / 2 - (symWidth / 2) / scale)) + ' ' + -(((objectY - symWidth / 2) - (objectY - symWidth / 2) / scale) + (symWidth / 2 - (symWidth / 2) / scale)) + ')  rotate(' + sVelocityAngle + ' ' + objectX + ' ' + objectY + ')"" />';
+
+					if (this.space.objects[code].trace) {
+						this.space.objects[code].trace.forEach(value => {
+							let objectX = (this.width >> 1) + (this.position.x + value.pX) / this.scale;
+							let objectY = (this.height >> 1) + (this.position.y + value.pY) / this.scale;
+
+							text += '<circle cx="' + objectX + '" cy="' + objectY + '" r="5" color:yellow/>';
+							console.log(value);
+						});
+					}
+				} else {
+					let scale = (objectR / (symWidth / 2));
+					text += '<use xlink:href="#' + object.symbol + '" x="' + (objectX - symWidth / 2) + '" y="' + (objectY - symWidth / 2) + '" transform="scale(' + scale + ') translate(' + -(((objectX - symWidth / 2) - (objectX - symWidth / 2) / scale) + (symWidth / 2 - (symWidth / 2) / scale)) + ' ' + -(((objectY - symWidth / 2) - (objectY - symWidth / 2) / scale) + (symWidth / 2 - (symWidth / 2) / scale)) + ')" />';
+				}
 			} else {
 				text +=   '<circle cx="' + objectX + '" cy="' + objectY + '" r="' + objectR + '"/>';
 			}

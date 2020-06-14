@@ -9,6 +9,13 @@ class SpaceObjects
 		this.timer = 0;
 		this.time = data.time;
 		this.statsContainer = false;
+
+		this.follow = data.hasOwnProperty('follow') ? data.follow : false;
+		this._distances = {};
+
+		this.trace = data.hasOwnProperty('trace') && data.trace ? [] : false;
+		this.trace = [];
+		this.traceLastTime = 0;
 	}
 
 	move (deltaTime)
@@ -26,8 +33,21 @@ class SpaceObjects
 		this.timer += deltaTime;
 		this.time += deltaTime;
 
+		if (this.trace) {
+			if (this.time >= this.traceLastTime + 60) {
+				this.trace.push({
+					t: this.time,
+					pX: this.data.position.x,
+					pY: this.data.position.y,
+					pZ: this.data.position.z,
+				});
+				this.traceLastTime = this.time;
+			}
+		}
+
 		if (this.statsContainer) {
 			this.displayStats();
+			console.log(this.trace);
 		}
 	}
 
@@ -37,5 +57,16 @@ class SpaceObjects
 		this.statsContainer.find('.timer').html(Helper.TimerToString(this.timer));
 		this.statsContainer.find('.velocity').html(Helper.VectorLengthToString(this.data.velocity, 6));
 		this.statsContainer.find('.acc').html(Helper.VectorLengthToString(this.data.acceleration, 9));
+
+		if (this.follow) {
+			let str = '';
+			this.follow.forEach(value => {
+				if (str != '') {
+					str += '<br>';
+				}
+				str += this._distances[value];
+			});
+			this.statsContainer.find('.follow').html(str);
+		}
 	}
 }

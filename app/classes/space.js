@@ -5,12 +5,13 @@ class Space
 	constructor ()
 	{
 		this.objects = {};
-		this.systemTime = new Date() / 1000;
+		this.systemTime = new Date('2020-05-01 10:00:00') / 1000;
 
 		let arData = [{
 			'code': 'Earth',
 			'name': 'Земля',
 			'type': 'GRAVITY',
+			'symbol': 'object_Earth',
 			'position': { x: 0, y: 0, z: 0 },
 			'velocity': { x: 0, y: 0, z: 0 },
 
@@ -29,14 +30,17 @@ class Space
 			'code': 'Shuttle',
 			'name': 'Шатл',
 			'type': 'SHIP',
-			'symbol': 'ship1',
+			'symbol': 'object_Shuttle',
 			'position': { x: 0, y: 6700, z: 0 },
 			'velocity': { x: 8, y: 0, z: 0 },
 
 			'engine': { x: 0, y: 0, z: 0 },
 
 			'radius': 0,
-			'weight': 1000
+			'weight': 1000,
+
+			'follow': ['Earth', 'Earth_Moon'],
+			'trace': true,
 		}];
 
 		arData.forEach((value, index, array) => {
@@ -45,46 +49,51 @@ class Space
 		});
 	}
 
-	tick ()
+	tick (deltaTime)
 	{
-		let newTime = new Date() / 1000;
-		let deltaTime = newTime - this.systemTime;
+		while (deltaTime > 0) {
+			let stepTime = deltaTime > 1 ? 1 : deltaTime;
+			deltaTime -= 1;
 
-		for (let code in this.objects) {
-			let mainObject = this.objects[code].data;
-			mainObject.acceleration = { x: 0, y: 0, z: 0 };
+			for (let code in this.objects) {
+				let mainObject = this.objects[code].data;
+				let _mainObject = this.objects[code];
+				mainObject.acceleration = { x: 0, y: 0, z: 0 };
 
-			for (let subCode in this.objects) {
-				if (code == subCode) continue;
+				for (let subCode in this.objects) {
+					if (code == subCode) continue;
 
-				let gravityObject = this.objects[subCode].data;
-				let distance = {};
-				let sDistance = 0;
-				let acceleration = {};
-				let sAcceleration = 0;
+					let gravityObject = this.objects[subCode].data;
+					let distance = {};
+					let sDistance = 0;
+					let acceleration = {};
+					let sAcceleration = 0;
 
-				distance.x = gravityObject.position.x - mainObject.position.x;
-				distance.y = gravityObject.position.y - mainObject.position.y;
-				distance.z = gravityObject.position.z - mainObject.position.z;
-				sDistance = Math.hypot(distance.x, distance.y, distance.z);				
-				sAcceleration = Space.G * gravityObject.weight / (sDistance * sDistance);
+					distance.x = gravityObject.position.x - mainObject.position.x;
+					distance.y = gravityObject.position.y - mainObject.position.y;
+					distance.z = gravityObject.position.z - mainObject.position.z;
+					sDistance = Math.hypot(distance.x, distance.y, distance.z);				
+					sAcceleration = Space.G * gravityObject.weight / (sDistance * sDistance);
 
-				acceleration.x = sAcceleration * (distance.x / sDistance);
-				acceleration.y = sAcceleration * (distance.y / sDistance);
-				acceleration.z = sAcceleration * (distance.z / sDistance);
+					acceleration.x = sAcceleration * (distance.x / sDistance);
+					acceleration.y = sAcceleration * (distance.y / sDistance);
+					acceleration.z = sAcceleration * (distance.z / sDistance);
 
-				mainObject.acceleration.x += acceleration.x;
-				mainObject.acceleration.y += acceleration.y;
-				mainObject.acceleration.z += acceleration.z;
+					mainObject.acceleration.x += acceleration.x;
+					mainObject.acceleration.y += acceleration.y;
+					mainObject.acceleration.z += acceleration.z;
 
-				mainObject.velocity.x += deltaTime * acceleration.x;
-				mainObject.velocity.y += deltaTime * acceleration.y;
-				mainObject.velocity.z += deltaTime * acceleration.z;
+					mainObject.velocity.x += stepTime * acceleration.x;
+					mainObject.velocity.y += stepTime * acceleration.y;
+					mainObject.velocity.z += stepTime * acceleration.z;
+
+					_mainObject._distances[subCode] = sDistance - gravityObject.radius;
+				}
+
+				this.objects[code].move(stepTime);
 			}
 
-			this.objects[code].move(deltaTime);
+			this.systemTime += stepTime;
 		}
-
-		this.systemTime = newTime;
 	}
 }
